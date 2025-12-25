@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intelligent Excuse Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #ef4444;   /* Red */
+      --secondary: #f97316; /* Orange */
+      --accent: #fb923c;    /* Light Orange */
+      --text: #1e293b;
+      --bg-light: #fff5f5;
+      --bg-dark: #1c1917;
+      --text-light: #fff7ed;
+
+      --primary: #0ea5e9;
+      --secondary: #2dd4bf;
+      --accent: #f97316;
+      --text: #1e293b;
+      --bg-light: #f0f9f5;
+      --bg-dark: #0f172a;
+      --text-light: #f1f5f9;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--bg-light);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .toggle-btn:hover {
+      transform: rotate(180deg);
+    }
+
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #e6f7ff 0%, #f0f9f5 100%);
+      color: #1a202c;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 20px;
+      color: white;
+      box-shadow: 0 10px 30px rgba(14, 165, 233, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(-15deg);
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+      position: relative;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    header .tagline {
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      opacity: 0.95;
+      position: relative;
+    }
+
+    header p {
+      font-size: 1.05rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Dashboard Cards */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary));
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 30px rgba(14, 165, 233, 0.15);
+    }
+
+    .card h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card h2 i {
+      color: #0ea5e9;
+      background: rgba(14, 165, 233, 0.1);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: #334155;
+      margin-bottom: 8px;
+      padding: 5px 0;
+    }
+
+    .feature-list i {
+      color: #f97316;
+      font-size: 0.9rem;
+    }
+
+    /* Generator Section */
+    .generator {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      margin-bottom: 40px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .generator h2 {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: #1e293b;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .generator h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: #374151;
+      font-size: 0.95rem;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 0.95rem;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    select:focus,
+    textarea:focus {
+      border-color: #0ea5e9;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+      outline: none;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 600;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+    }
+
+    button.secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    button.secondary:hover {
+      background: #e2e8f0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    button.tertiary {
+      background: linear-gradient(to right, var(--secondary), var(--accent));
+      color: white;
+    }
+
+    button.tertiary:hover {
+      box-shadow: 0 5px 15px rgba(249, 115, 22, 0.3);
+    }
+
+    .result {
+      background: #f8fafc;
+      padding: 25px;
+      border-radius: 14px;
+      border-left: 4px solid #0ea5e9;
+      margin-top: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .result h3 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result h3 i {
+      color: #0ea5e9;
+    }
+
+    .result p {
+      line-height: 1.6;
+      color: #334155;
+      font-size: 1rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #64748b;
+      padding: 20px;
+    }
+
+    /* Layout Redesign */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dashboard {
+      margin-bottom: 0;
+    }
+
+    /* Result typing effect */
+    .typing {
+      border-right: 2px solid var(--primary);
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 2s steps(40, end), blink 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    /* Responsive Design */
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .generator {
+        padding: 25px;
+      }
+      
+      .button-group, .action-buttons {
+        flex-direction: column;
+      }
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Animation for generated content */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="glass">
+      <button class="toggle-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+
+      <h1>Intelligent Excuse Generator</h1>
+      <p class="tagline">AI-powered context-aware excuses for any situation</p>
+      <p>Enhance your credibility with smart reasoning and auto-proof</p>
+    </header>
+
+    <div class="main-layout">
+<!-- Dashboard Features -->
+    <div class="dashboard">
+      <div class="card">
+        <h2><i class="fas fa-brain"></i> AI Excuses</h2>
+        <p>Context-based excuses tailored for different situations.</p>
+        <ul class="feature-list">
+          <li><i class="fas fa-check-circle"></i> Work excuses</li>
+          <li><i class="fas fa-check-circle"></i> School/College excuses</li>
+          <li><i class="fas fa-check-circle"></i> Social excuses</li>
+          <li><i class="fas fa-check-circle"></i> Family excuses</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-sliders-h"></i> Customization</h2>
+        <p>Adjust urgency, believability, and personalize details.</p>
+        <ul class="feature-list">
+          <li><i class="fas fa-bolt"></i> Urgency control</li>
+          <li><i class="fas fa-scale-balanced"></i> Believability score</li>
+          <li><i class="fas fa-edit"></i> Add personal details</li>
+          <li><i class="fas fa-heart"></i> Save favorites</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-file-alt"></i> Proof Generator</h2>
+        <p>Auto-generate text support and formal proof.</p>
+        <ul class="feature-list">
+          <li><i class="fas fa-file-pdf"></i> Text proof</li>
+          <li><i class="fas fa-comment"></i> Supportive notes</li>
+          <li><i class="fas fa-location-dot"></i> Contextual reasons</li>
+          <li><i class="fas fa-stamp"></i> Professional tone</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-language"></i> Multi-Language</h2>
+        <p>Generate excuses in multiple languages.</p>
+        <ul class="feature-list">
+          <li><i class="fas fa-globe"></i> 10+ languages</li>
+          <li><i class="fas fa-sync"></i> Real-time translation</li>
+          <li><i class="fas fa-comments"></i> Cultural adaptation</li>
+          <li><i class="fas fa-volume-up"></i> Natural tone</li>
+        </ul>
+      </div>
+    </div>
+
+    </div>
+    <!-- Generator Section -->
+    <div class="generator">
+      <h2>Generate Your Excuse</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="scenario">Scenario Type:</label>
+          <select id="scenario">
+            <option value="">Select a scenario</option>
+            <option value="work">Work</option>
+            <option value="school">School/University</option>
+            <option value="social">Social Event</option>
+            <option value="family">Family Obligation</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="urgency">Urgency Level:</label>
+          <select id="urgency">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="extreme">Extreme Emergency</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="details">Additional Details (Optional):</label>
+        <textarea id="details" rows="3" placeholder="Add specific details to make your excuse more convincing..."></textarea>
+      </div>
+
+      <div class="button-group">
+        <button onclick="generateExcuse()"><i class="fas fa-magic"></i> Generate Excuse</button>
+        <button class="secondary" onclick="clearForm()"><i class="fas fa-eraser"></i> Clear Form</button>
+      </div>
+
+      <div class="result" id="result">
+        <h3><i class="fas fa-lightbulb"></i> Your AI-Generated Excuse</h3>
+        <p>Select a scenario and click "Generate Excuse" to create your perfect excuse.</p>
+      </div>
+    </div>
+
+    
+  </div>
+
+  <script>
+    function generateExcuse() {
+      const scenario = document.getElementById("scenario").value;
+      const urgency = document.getElementById("urgency").value;
+      const details = document.getElementById("details").value;
+
+      if (!scenario) {
+        alert("Please select a scenario type");
+        return;
+      }
+
+      const scenarios = {
+        work: [
+          "I'm experiencing unexpected internet issues preventing me from attending the meeting.",
+          "A sudden family emergency requires my immediate attention today.",
+          "I'm feeling unwell with flu-like symptoms and should avoid contact with others.",
+          "My car broke down unexpectedly and I'm waiting for roadside assistance."
+        ],
+        school: [
+          "I've been facing persistent technical issues with the online learning platform.",
+          "I have a last-minute doctor's appointment that couldn't be rescheduled.",
+          "A urgent family matter requires my attention today preventing me from attending class.",
+          "Public transport issues are preventing me from reaching campus on time."
+        ],
+        social: [
+          "I'm not feeling well and need to rest tonight to recover properly.",
+          "An urgent work task has come up that requires my immediate attention.",
+          "I have unexpected family visitors from out of town that just arrived.",
+          "My car is in the garage for emergency repairs and I have no transportation."
+        ],
+        family: [
+          "An urgent work deadline needs my focus and I won't be able to make it.",
+          "I'm not feeling well and shouldn't attend to avoid getting others sick.",
+          "My vehicle broke down unexpectedly and I can't travel at the moment.",
+          "I had a prior commitment I completely forgot about that I can't reschedule."
+        ]
+      };
+
+      const excuses = scenarios[scenario];
+      const randomExcuse = excuses[Math.floor(Math.random() * excuses.length)];
+
+      let urgencyPhrase = "";
+      switch (urgency) {
+        case "low":
+          urgencyPhrase = "I hope it's not too much trouble, but ";
+          break;
+        case "medium":
+          urgencyPhrase = "I'm sorry to inform you that ";
+          break;
+        case "high":
+          urgencyPhrase = "I urgently need to let you know that ";
+          break;
+        case "extreme":
+          urgencyPhrase = "This is an emergency situation - ";
+          break;
+      }
+
+      let fullExcuse = urgencyPhrase + randomExcuse;
+      if (details) fullExcuse += " Specifically, " + details + ".";
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `
+        <h3><i class="fas fa-lightbulb"></i> Your AI-Generated Excuse</h3>
+        <p class="typing">${fullExcuse}</p>
+        <div class="action-buttons">
+          <button onclick="generateProof()"><i class="fas fa-file-alt"></i> Generate Proof</button>
+          <button class="tertiary" onclick="copyToClipboard()"><i class="fas fa-copy"></i> Copy Text</button>
+          <button onclick="sendExcuse()" class="secondary"><i class="fas fa-paper-plane"></i> Send Excuse</button>
+        </div>
+      `;
+      
+      resultDiv.classList.add("fade-in");
+    }
+
+    function clearForm() {
+      document.getElementById("scenario").value = "";
+      document.getElementById("urgency").value = "medium";
+      document.getElementById("details").value = "";
+      
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `
+        <h3><i class="fas fa-lightbulb"></i> Your AI-Generated Excuse</h3>
+        <p>Select a scenario and click "Generate Excuse" to create your perfect excuse.</p>
+      `;
+    }
+
+    function generateProof() {
+      alert("Proof generation feature would be implemented here. This could generate a fake doctor's note, email template, or other supporting document.");
+    }
+
+    function copyToClipboard() {
+      const excuseText = document.querySelector("#result p").innerText;
+      navigator.clipboard.writeText(excuseText).then(() => {
+        alert("Excuse copied to clipboard!");
+      });
+    }
+
+    function sendExcuse() {
+      const excuseText = document.querySelector("#result p").innerText;
+      alert("This would open your email client with the excuse pre-filled. Excuse: " + excuseText);
+    }
+  
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      const icon = document.querySelector(".toggle-btn i");
+      if (document.body.classList.contains("dark")) {
+        icon.classList.remove("fa-moon");
+        icon.classList.add("fa-sun");
+      } else {
+        icon.classList.remove("fa-sun");
+        icon.classList.add("fa-moon");
+      }
+    }
+</script>
+</body>
+</html>
